@@ -8,7 +8,7 @@ import threading
 # အစ်ကို့ရဲ့ Telegram Token
 TG_TOKEN = '8482974569:AAES9ig4nWp0sFE5iHijuzxPsHqk4VKArzQ'
 # အစ်ကို့ရဲ့ DeepSeek API Key
-DEEPSEEK_KEY = 'd114f21983114da096fc69cc3f2fd300'
+DEEPSEEK_KEY = 'sk-7050730862a9431199c1fe948530a4be'
 
 bot = telebot.TeleBot(TG_TOKEN)
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def ask_deepseek(message_text):
     url = "https://api.deepseek.com/chat/completions"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {DEEPSEEK_KEY}"
+        "Authorization": f"Bearer {sk-7050730862a9431199c1fe948530a4be}"
     }
     data = {
         "model": "deepseek-chat",
