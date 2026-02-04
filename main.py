@@ -1,11 +1,19 @@
 import telebot
 import requests
+import os
+from flask import Flask
+import threading
 
-# အစ်ကို့ဆီကရတဲ့ အချက်အလက်တွေကို အတိအကျ ထည့်ပေးထားပါတယ်
+# Bot အချက်အလက်
 TG_TOKEN = '8482974569:AAES9ig4nWp0sFE5iHijuzxPsHqk4VKArzQ'
 DEEPSEEK_KEY = 'd114f21983114da096fc69cc3f2fd300'
 
 bot = telebot.TeleBot(TG_TOKEN)
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
 
 def ask_deepseek(message_text):
     url = "https://api.deepseek.com/chat/completions"
@@ -13,7 +21,7 @@ def ask_deepseek(message_text):
     data = {
         "model": "deepseek-chat",
         "messages": [
-            {"role": "system", "content": "သင်သည် Aung Diamond Store မှ ကျွမ်းကျင်သော အရောင်းဝန်ထမ်းဖြစ်သည်။ ဝယ်သူများကို မြန်မာလို ယဉ်ကျေးစွာ ပြန်ဖြေပေးပါ။"},
+            {"role": "system", "content": "သင်သည် Aung Diamond Store မှ အရောင်းဝန်ထမ်းဖြစ်သည်။ မြန်မာလို ယဉ်ကျေးစွာ ဖြေပါ။"},
             {"role": "user", "content": message_text}
         ]
     }
@@ -25,8 +33,15 @@ def ask_deepseek(message_text):
 
 @bot.message_handler(func=lambda m: True)
 def reply(m):
-    ai_response = ask_deepseek(m.text)
-    bot.reply_to(m, ai_response)
+    bot.reply_to(m, ask_deepseek(m.text))
+
+def run_bot():
+    bot.infinity_polling()
 
 if __name__ == "__main__":
-    bot.infinity_polling()
+    # Bot ကို သီးသန့် အလုပ်လုပ်ခိုင်းခြင်း
+    threading.Thread(target=run_bot).start()
+    # Render အတွက် Port ဖွင့်ပေးခြင်း
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
+    
